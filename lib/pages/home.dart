@@ -12,7 +12,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context)!.settings.arguments as Map;
+    data = data!.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments as Map;
     print(data.runtimeType);
     print(data!['isDaytime']);
 
@@ -36,8 +36,17 @@ class _HomeState extends State<Home> {
             child: Column(
               children: <Widget>[
                 FlatButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/location');
+                    onPressed: () async {
+                      dynamic result = await Navigator.pushNamed(context, '/location');
+                      setState((){
+                        data = {
+                          'time' : result['time'],
+                          'location' : result['location'],
+                          'isDaytime' : result['isDaytime'],
+                          'flag' : result['flag']
+
+                        };
+                      });
                     },
                     icon: Icon(
                       Icons.edit_location,
@@ -46,17 +55,20 @@ class _HomeState extends State<Home> {
                     label: Text(
                       'Edit Location',
                       style: TextStyle(
-                        fontSize: 28.0,
-                        letterSpacing: 2.0,
-                        color: Colors.white,
+                        color: Colors.grey[300],
                       ),
-                    )),
+                    ),
+                ),
                 SizedBox(height: 20.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(data!['location'],
-                        style: TextStyle(fontSize: 28.0, letterSpacing: 2.0)),
+                        style: TextStyle(fontSize: 28.0,
+                            letterSpacing: 2.0,
+                             color: Colors.white,
+                        )
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -65,7 +77,7 @@ class _HomeState extends State<Home> {
                 Text(
                   data!['time'],
                   style: TextStyle(
-                    fontSize: 60.0,
+                    fontSize: 66.0,
                     color: Colors.white,
                   ),
                 ),
